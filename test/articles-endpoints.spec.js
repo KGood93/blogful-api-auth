@@ -56,7 +56,7 @@ describe('Articles Endpoints', function() {
       it(`responds with 200 and an empty list`, () => {
         return supertest(app)
           .get('/api/articles')
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .set('Authorization', helpers.makeAuthHeader(userNoCreds))
           .expect(200, [])
       })
     })
@@ -142,7 +142,7 @@ describe('Articles Endpoints', function() {
 
         return supertest(app)
           .get(`/api/articles/${articleId}`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .set('Authorization', helpers.makeAuthHeader(userNoCreds))
           .expect(200, expectedArticle)
       })
     })
@@ -165,7 +165,7 @@ describe('Articles Endpoints', function() {
       it('removes XSS attack content', () => {
         return supertest(app)
           .get(`/api/articles/${maliciousArticle.id}`)
-          .set('Authorization', makeAuthHeader(testUser))
+          .set('Authorization', helpers.makeAuthHeader(userNoCreds))
           .expect(200)
           .expect(res => {
             expect(res.body.title).to.eql(expectedArticle.title)
