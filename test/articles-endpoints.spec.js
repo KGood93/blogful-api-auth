@@ -112,8 +112,11 @@ describe('Articles Endpoints', function() {
     })
   })
 
-  describe.only(`GET /api/articles/:article_id`, () => {
+  describe(`GET /api/articles/:article_id`, () => {
     context(`Given no articles`, () => {
+      beforeEach(() => 
+        helpers.seedUsers(db, testUsers)
+      )
       it(`responds with 404`, () => {
         const articleId = 123456
         return supertest(app)
@@ -177,6 +180,9 @@ describe('Articles Endpoints', function() {
 
   describe(`GET /api/articles/:article_id/comments`, () => {
     context(`Given no articles`, () => {
+      beforeEach(() => 
+        helpers.seedUsers(db, testUsers)
+      )
       it(`responds with 404`, () => {
         const articleId = 123456
         return supertest(app)
