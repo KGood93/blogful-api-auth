@@ -1,4 +1,5 @@
 const express = require('express')
+const AuthService = require('./auth-service')
 
 const authRouter = express.Router()
 const jsonBodyParser = express.json()
@@ -13,8 +14,19 @@ authRouter
                 return res.status(400).json({
                     error: `Missing 'S{key}' in request body`
                 })
-                
-        res.send('ok')
+        
+        AuthService.getUserWithUserName(
+            req.app.get('db'),
+            loginUser.user_name
+        )
+            .then(dbUser => {
+                if (!dbUser)
+                    return res.status(400).json({
+                        error: 'Incorrect user_name or password',
+                    })
+                res.send('ok')
+            })
+            .catch(next)
     })
 
 module.exports = authRouter    
