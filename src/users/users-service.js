@@ -7,6 +7,13 @@ const UsersService = {
             .first()
             .then(user => !!user)
     },
+    insertUser(db, newUser) {
+        return db
+            .insert(newUser)
+            .into('blogful_users')
+            .returning('*')
+            .then(([user]) => user)
+    },
     validatePassword(password) {
         if(password.length < 8) {
             return 'Password must be longer than 8 characters'

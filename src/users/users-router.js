@@ -1,11 +1,11 @@
 const express = require('express')
-
+const path = require('path')
 const usersRouter = express.Router()
 const jsonBodyParser = express.json()
 
 usersRouter
     .post('/', jsonBodyParser, (req, res, next) => {
-        const {password, user_name} = req.body
+        const {password, user_name, full_name, nickname} = req.body
 
         for (const field of ['full_name', 'user_name', 'password'])
             if (!req.body[field])
@@ -26,7 +26,15 @@ usersRouter
                 if (hasUserWithUserName)
                     return res.status(400).json({error: `Username already taken`})
                 
-                res.send('ok')
+                res.status(201)
+                    .location(path.posix.join(req.originalUrl, `/whatever`))
+                    .json({
+                        id: 'whatever',
+                        user_name,
+                        full_name,
+                        nickname: nickname || '',
+                        date_created: Date.now(),
+                    })
             })
             .catch(next)
     })
