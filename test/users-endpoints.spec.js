@@ -1,8 +1,9 @@
 const knex = require('knex')
+const bcrypt = require('bcryptjs')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe.only('Users Endpoints', function() {
+describe('Users Endpoints', function() {
   let db
 
   const { testUsers } = helpers.makeArticlesFixtures()
@@ -163,6 +164,11 @@ describe.only('Users Endpoints', function() {
                          const expectedDate = new Date().toLocaleString('en', {timezone: 'UTC'})
                          const actualDate = new Date(row.date_created).toLocaleString()
                          expect(actualDate).to.eql(expectedDate)
+
+                         return bcrypt.compare(newUser.password, row.password)
+                     })
+                     .then(compareMatch => {
+                         expect(compareMatch).to.be.true
                      })
                 )
         })
