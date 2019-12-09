@@ -6,6 +6,7 @@ describe.only('Users Endpoints', function() {
   let db
 
   const { testUsers } = helpers.makeArticlesFixtures()
+  const testUser = testUsers[0]
 
   before('make knex instance', () => {
     db = knex({
@@ -100,6 +101,30 @@ describe.only('Users Endpoints', function() {
             .post('/api/users')
             .send(userPasswordStartsSpaces)
             .expect(400, {error: `Password must not start or end with empty spaces`})
+      })
+
+      it(`responds 400 error when password isn't complex enough`, () => {
+          const userPasswordNotComplex = {
+              user_name: 'test user_name',
+              password: '11AAaabb',
+              full_name: 'test full_name'
+          }
+          return supertest(app)
+            .post('/api/users')
+            .send(userPasswordNotComplex)
+            .expect(400, {error: `Password must contain 1 upper case, lower case, number and special character`})
+      })
+
+      it(`responds 400 'User name already taken' when user_name isn't unique`, () => {
+          const duplicateUser = {
+              user_name: 'testUser.user_name',
+              password: '11AAaa!!',
+              full_name: 'test full_name',
+          }
+          return supertest(app)
+            .post('/api/users')
+            .send(duplicateUser)
+            .expect(400, {error:`Username already taken`})
       })
 
     })
